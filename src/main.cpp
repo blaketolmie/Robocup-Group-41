@@ -6,8 +6,15 @@
 #define RIGHT_MOTOR_ADDRESS 1     //Pin corresponding to the right dc motor
 // #define MIN_SPEED_CAP 1 //Set the minimum speed value that can be written to the motors
 // #define MAX_SPEED_CAP 1 //Set the maximum speed value that can be written to the motors
-#define MIN_SPEED_CAP 1050
-#define MAX_SPEED_CAP 1950
+#define MIN_SPEED_CAP 1600
+#define MAX_SPEED_CAP 2005
+
+// Speed increment variables
+#define LOWER_GAP 50    // Small increments below 1700
+#define LOWER_GAP_VALUE 1700
+#define UPPER_GAP 2    // Large increments above 1900
+#define UPPER_GAP_VALUE 1990
+#define NORMAL_GAP 25   // Normal increments between 1700-1900
 
 // Create servo objects for motor control
 Servo leftMotor;
@@ -59,34 +66,73 @@ void setup() {
   rightMotor.attach(RIGHT_MOTOR_ADDRESS);
   
   // Start with motors stopped
-  set_motor(1500, 1500); // 1500 = stop position
+  leftMotor.writeMicroseconds(1500); // Direct call since 1500 is outside our caps
+  rightMotor.writeMicroseconds(1500);
+  Serial.println("Motors stopped (1500 - outside speed caps)");
   
   Serial.println("Motors initialized and stopped");
   delay(1000);
 }
 
 void loop() {
-  Serial.println("=== Starting speed ramp test ===");
+  Serial.println("=== Starting variable speed ramp test ===");
   
-  // Start from stop and gradually increase speed
-  for (int speed = 1500; speed >= 1050; speed -= 25) {
+  // Start from minimum speed and gradually increase to maximum
+  int speed = MIN_SPEED_CAP;
+  while (speed <= MAX_SPEED_CAP) {
     Serial.print("Setting speed to: ");
     Serial.println(speed);
     set_motor(speed, speed); // Both motors same speed
     delay(500); // Wait 0.5 seconds between speed changes
+    
+    // Determine increment based on current speed
+    if (speed < LOWER_GAP_VALUE) {
+      speed += LOWER_GAP;  // Small increments (10)
+      Serial.print("Using LOWER_GAP: +");
+      Serial.println(LOWER_GAP);
+    } else if (speed > UPPER_GAP_VALUE) {
+      speed += UPPER_GAP;  // Large increments (50)
+      Serial.print("Using UPPER_GAP: +");
+      Serial.println(UPPER_GAP);
+    } else {
+      speed += NORMAL_GAP; // Normal increments (25)
+      Serial.print("Using NORMAL_GAP: +");
+      Serial.println(NORMAL_GAP);
+    }
   }
   
-  Serial.println("Maximum forward speed reached!");
+  Serial.println("Maximum speed reached!");
   delay(2000); // Stay at max speed for 2 seconds
   
-  // Gradually slow down back to stop
+  // Gradually slow down back to minimum
   Serial.println("Slowing down...");
-  for (int speed = 1050; speed <= 1500; speed += 25) {
+  speed = MAX_SPEED_CAP;
+  while (speed >= MIN_SPEED_CAP) {
     Serial.print("Setting speed to: ");
     Serial.println(speed);
     set_motor(speed, speed);
     delay(300);
+    
+    // Determine decrement based on current speed
+    if (speed < LOWER_GAP_VALUE) {
+      speed -= LOWER_GAP;  // Small decrements (10)
+      Serial.print("Using LOWER_GAP: -");
+      Serial.println(LOWER_GAP);
+    } else if (speed > UPPER_GAP_VALUE) {
+      speed -= UPPER_GAP;  // Large decrements (50)
+      Serial.print("Using UPPER_GAP: -");
+      Serial.println(UPPER_GAP);
+    } else {
+      speed -= NORMAL_GAP; // Normal decrements (25)
+      Serial.print("Using NORMAL_GAP: -");
+      Serial.println(NORMAL_GAP);
+    }
   }
+  
+  // Stop motors (outside speed caps)
+  Serial.println("Stopping motors (1500 - outside caps)");
+  leftMotor.writeMicroseconds(1500);
+  rightMotor.writeMicroseconds(1500);
   
   Serial.println("Stopped - waiting 3 seconds before next cycle");
   delay(3000);
