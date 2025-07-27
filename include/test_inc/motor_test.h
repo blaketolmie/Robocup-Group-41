@@ -1,8 +1,8 @@
 #ifndef MOTOR_TEST_H
 #define MOTOR_TEST_H
 
-#include "../../include/globals.h"
-#include "../../include/motors.h"
+#include "globals.h"
+#include "motors.h"
 
 void motor_test();
 

@@ -1,5 +1,5 @@
 #include "globals.h"
-#include "../test/test_inc/testing.h"
+#include "test_inc/testing.h"
 #include "motors.h"
 
 void setup() {
@@ -15,8 +15,6 @@ void setup() {
 void loop() {
   // Comment out when running other stuff since run_tests() has its own unbreakable while loops
   run_tests(); // Run all tests
-
-
 
 
 

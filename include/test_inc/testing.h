@@ -2,8 +2,8 @@
 #define TESTING_H
 
 // Add necessary includes here
-#include "../../include/globals.h"
-#include "../../include/motors.h"
+#include "globals.h"
+#include "motors.h"
 
 // Necessary includes for testing
 #include "motor_test.h"

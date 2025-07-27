@@ -1,4 +1,4 @@
-#include "../test_inc/motor_test.h"
+#include "test_inc/motor_test.h"
 
 // ################################### Motor Test Function ###################################
 void motor_test() {

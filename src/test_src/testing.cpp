@@ -1,6 +1,6 @@
 // ######################################### MOTOR TEST ###########################################
 
-#include "../test_inc/testing.h"
+#include "test_inc/testing.h"
 
 
 void run_tests() {
