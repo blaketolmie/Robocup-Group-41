@@ -1,0 +1,344 @@
+# ROBOCUP PROJECT DEVELOPMENT PLAN
+# Group 41 - Modular Development Strategy
+# Date: July 23, 2025
+
+## PROJECT OVERVIEW
+Goal: Build a modular, testable robocup robot that can navigate, collect weights, and return to base.
+
+## DEVELOPMENT PHASES
+
+### PHASE 1: FOUNDATION (COMPLETED ✓)
+**Status: Complete**
+- [x] Basic motor control system
+- [x] Variable speed control with different increment ranges
+- [x] Serial debugging output
+- [x] PlatformIO project structure
+
+### PHASE 2: CORE MOVEMENT SYSTEM (NEXT - Week 1)
+**Priority: HIGH**
+
+2.1 Enhanced Motor Control with PID
+- [ ] Create motors.h/.cpp with proper class structure
+- [ ] Add encoder feedback support (pins 2,3,4,5 based on example)
+- [ ] Implement PID speed control system:
+  - [ ] **Speed PID**: Control motor RPM using encoder feedback
+  - [ ] **Position PID**: Control distance traveled using encoder counts
+  - [ ] **Heading PID**: Control robot direction using IMU feedback
+- [ ] Add safety limits and emergency stop
+- [ ] Create PID tuning functions for Kp, Ki, Kd values
+
+2.2 PID Control Integration Strategy
+- [ ] **Motor Speed PID Control**:
+  - [ ] Encoder-based RPM feedback (60000ms/minute conversion)
+  - [ ] Target RPM vs Actual RPM error calculation
+  - [ ] PID output adjusts motor pulse width (1010-1990 range)
+  - [ ] Separate PID controllers for left/right motors
+
+- [ ] **IMU-Based Heading PID Control**:
+  - [ ] BNO055 IMU for heading feedback (0-360 degrees)
+  - [ ] Target heading vs current heading error
+  - [ ] PID output adjusts differential motor speeds
+  - [ ] Handle 360°/0° wraparound correctly
+
+- [ ] **Sensor-Based Distance PID Control**:
+  - [ ] Ultrasonic/ToF sensors for obstacle avoidance
+  - [ ] Maintain desired distance from walls/objects
+  - [ ] PID output adjusts forward/backward movement
+
+2.3 Multi-Loop PID Architecture
+- [ ] **Outer Loop**: Navigation control (where to go)
+- [ ] **Middle Loop**: Heading control (which direction to face)  
+- [ ] **Inner Loop**: Motor speed control (how fast to spin)
+- [ ] Cascade control system for smooth, accurate movement
+
+2.4 Basic Navigation Functions
+- [ ] Create navigation.h/.cpp module
+- [ ] Implement PID-enhanced movement functions:
+  - [ ] move_forward_distance(mm) // Using encoder PID
+  - [ ] turn_to_heading(degrees)   // Using IMU PID
+  - [ ] maintain_distance(sensor, mm) // Using sensor PID
+  - [ ] follow_wall(side, distance)   // Combined PID control
+  - [ ] stop_all_motors()
+
+2.5 Testing Framework
+- [ ] Create test.h/.cpp for unit testing
+- [ ] PID tuning tests for each controller
+- [ ] Individual motor RPM accuracy tests
+- [ ] Heading accuracy tests (±2 degrees)
+- [ ] Distance accuracy tests (±5mm)
+- [ ] Combined movement tests
+
+### PHASE 3: SENSOR INTEGRATION & PID FEEDBACK (Week 2-3)
+**Priority: HIGH**
+
+3.1 Distance Sensors with PID Integration
+- [ ] Create sensors.h/.cpp module
+- [ ] Implement ultrasonic sensor support (HC-SR04, pins 24-27)
+- [ ] Add Time-of-Flight (ToF) sensors (VL53L0X/VL53L1X)
+- [ ] **Wall Following PID**: Maintain constant distance from walls
+- [ ] **Obstacle Avoidance PID**: Stop at safe distance from objects
+- [ ] Sensor calibration and filtering (moving average)
+
+3.2 Color Detection with Decision Logic
+- [ ] Implement color sensor (TCS34725)
+- [ ] Base detection (home vs enemy) for autonomous return
+- [ ] Weight detection logic for collection decisions
+- [ ] Integration with navigation system
+
+3.3 IMU Integration for Heading Control
+- [ ] Add IMU support (BNO055, I2C communication)
+- [ ] **Heading PID Controller**:
+  - [ ] Current heading: bno.getEvent() → orientation.x
+  - [ ] Target heading calculation with wraparound
+  - [ ] Error = target - current (handle 360°/0° transition)
+  - [ ] PID output → differential motor speeds
+- [ ] Compass heading tracking (0-360°)
+- [ ] Turn angle calculation and execution
+
+3.4 Multi-Sensor PID Fusion
+- [ ] **Sensor Priority System**: 
+  - [ ] Emergency stop: Close obstacle detection overrides all
+  - [ ] Navigation: IMU heading + encoder distance
+  - [ ] Fine adjustment: Wall following sensors
+- [ ] **Sensor Fusion Algorithm**:
+  - [ ] Combine IMU + encoder for position estimation
+  - [ ] Use multiple ToF sensors for 3D obstacle map
+  - [ ] Weight sensors + color for object identification
+
+### PHASE 4: COLLISION AVOIDANCE (Week 3-4)
+**Priority: MEDIUM**
+
+4.1 Obstacle Detection
+- [ ] Create collision_avoidance.h/.cpp
+- [ ] Front/side obstacle detection
+- [ ] Dynamic path adjustment
+- [ ] Wall following algorithm
+
+4.2 Smart Movement
+- [ ] Create smartmove.h/.cpp module
+- [ ] Sensor-based navigation
+- [ ] Obstacle avoidance integration
+- [ ] Path planning basics
+
+### PHASE 5: WEIGHT COLLECTION SYSTEM (Week 4-5)
+**Priority: HIGH**
+
+5.1 Weight Detection
+- [ ] Create weight_collection.h/.cpp
+- [ ] Weight scanning algorithms
+- [ ] Weight identification
+- [ ] Collection mechanism control
+
+5.2 Collection Hardware
+- [ ] Servo/actuator control for collection mechanism
+- [ ] Weight storage management
+- [ ] Load monitoring (if load cell available)
+
+### PHASE 6: BASE OPERATIONS (Week 5-6)
+**Priority: MEDIUM**
+
+6.1 Base Detection & Return
+- [ ] Create return_to_base.h/.cpp
+- [ ] Home base detection
+- [ ] Navigation to home base
+- [ ] Weight unloading mechanism
+
+6.2 Game Strategy
+- [ ] Create finite_state_machine.h/.cpp
+- [ ] Game state management
+- [ ] Strategy implementation
+- [ ] Time management
+
+### PHASE 7: ADVANCED FEATURES (Week 6-7)
+**Priority: LOW**
+
+7.1 Telemetry & Debugging
+- [ ] Create telem.h/.cpp
+- [ ] Wireless communication (if available)
+- [ ] Real-time debugging
+- [ ] Performance monitoring
+
+7.2 Advanced Navigation
+- [ ] Create navigate.h/.cpp
+- [ ] Advanced pathfinding
+- [ ] Map building (if sensors support)
+- [ ] Localization improvements
+
+### PHASE 8: INTEGRATION & TESTING (Week 7-8)
+**Priority: CRITICAL**
+
+8.1 System Integration
+- [ ] Integrate all modules
+- [ ] Test complete system
+- [ ] Performance optimization
+- [ ] Bug fixes and refinement
+
+8.2 Competition Preparation
+- [ ] Full competition simulation
+- [ ] Strategy optimization
+- [ ] Backup systems
+- [ ] Final testing
+
+## FILE STRUCTURE PLAN
+
+```
+include/
+├── motors.h              // Motor control class
+├── sensors.h             // All sensor interfaces
+├── navigation.h          // Basic movement functions
+├── collision_avoidance.h // Obstacle detection/avoidance
+├── weight_collection.h   // Weight detection/collection
+├── return_to_base.h      // Base operations
+├── smartmove.h          // Intelligent movement
+├── finite_state_machine.h // Game state management
+├── telem.h              // Telemetry/debugging
+└── global.h             // Global definitions
+
+src/
+├── main.cpp             // Main program loop
+├── motors.cpp           // Motor implementations
+├── sensors.cpp          // Sensor implementations
+├── navigation.cpp       // Movement implementations
+├── collision_avoidance.cpp
+├── weight_collection.cpp
+├── return_to_base.cpp
+├── smartmove.cpp
+├── finite_state_machine.cpp
+├── telem.cpp
+└── globals.cpp          // Global variable definitions
+
+test/
+├── test_motors.cpp      // Motor unit tests
+├── test_sensors.cpp     // Sensor unit tests
+├── test_navigation.cpp  // Navigation tests
+└── integration_tests.cpp // Full system tests
+```
+
+## TESTING STRATEGY
+
+### Unit Testing (Each Phase)
+- Test individual modules in isolation
+- Verify function inputs/outputs
+- Test edge cases and error conditions
+
+### Integration Testing 
+- Test module interactions
+- Verify data flow between systems
+- Test complete subsystems
+
+### System Testing
+- Full robot testing in competition environment
+- Performance benchmarking
+- Stress testing
+
+## DEVELOPMENT PRINCIPLES
+
+1. **Modular Design**: Each subsystem is independent and testable
+2. **Incremental Development**: Build and test one feature at a time
+3. **PID-First Approach**: Implement feedback control from the start
+4. **Documentation**: Comment code thoroughly
+5. **Version Control**: Regular commits with clear messages
+6. **Testing First**: Test each component before integration
+7. **Fail-Safe Design**: Include emergency stops and error handling
+8. **Cascade Control**: Inner loops (motors) before outer loops (navigation)
+
+### 1. **Motor Speed PID (Inner Loop)**
+```cpp
+class MotorPID {
+  private:
+    float Kp, Ki, Kd;           // PID constants
+    float previous_error;        // For derivative
+    float integral;             // For integral
+    int target_rpm, current_rpm;
+    
+  public:
+    int calculateOutput() {
+      error = target_rpm - current_rpm;
+      integral += error;
+      derivative = error - previous_error;
+      
+      output = Kp*error + Ki*integral + Kd*derivative;
+      return constrain(output + base_pulse, 1010, 1990);
+    }
+};
+```
+
+### 2. **IMU Heading PID (Middle Loop)**
+```cpp
+class HeadingPID {
+  private:
+    float Kp_heading, Ki_heading, Kd_heading;
+    float target_heading, current_heading;
+    
+  public:
+    void calculateDifferentialSpeeds() {
+      error = normalizeAngle(target_heading - current_heading);
+      pid_output = Kp*error + Ki*integral + Kd*derivative;
+      
+      // Apply to motors differentially
+      left_speed_adjust = base_speed - pid_output;
+      right_speed_adjust = base_speed + pid_output;
+    }
+};
+```
+
+### 3. **Sensor Distance PID (Outer Loop)**
+```cpp
+class DistancePID {
+  private:
+    float Kp_dist, Ki_dist, Kd_dist;
+    float target_distance, measured_distance;
+    
+  public:
+    float calculateSpeedAdjustment() {
+      error = target_distance - measured_distance;
+      return Kp*error + Ki*integral + Kd*derivative;
+    }
+};
+```
+
+### 4. **Integration Architecture**
+```
+Sensors → Distance PID → Heading PID → Motor Speed PID → Motors
+   ↑         (Outer)      (Middle)        (Inner)         ↓
+   └─────────── Feedback Loops ──────────────────────────┘
+```
+
+### 5. **Hardware Integration Points**
+- **Encoders**: Pins 2,3,4,5 (interrupt-based counting)
+- **IMU**: I2C communication (BNO055)
+- **Ultrasonics**: Pins 24-27 (trigger/echo pairs)
+- **ToF Sensors**: I2C communication (multiple addresses)
+- **Motors**: PWM pins 0,1 (servo control 1010-1990μs)
+
+### 6. **PID Tuning Strategy**
+1. **Start with Motor Speed PID** (inner loop first)
+2. **Tune Heading PID** (with motors working)
+3. **Add Distance PID** (complete system)
+4. **Use Ziegler-Nichols or manual tuning**
+5. **Test in incremental complexity**
+
+## CURRENT STATUS
+- ✅ Phase 1: Complete (basic motor control working)
+- 🔄 Phase 2: Ready to start (enhanced motor control)
+- ⏳ Phases 3-8: Planned
+
+## NEXT IMMEDIATE STEPS
+1. Create motors.h/.cpp with proper class structure
+2. Implement basic navigation functions
+3. Set up testing framework
+4. Begin sensor integration planning
+
+## RESOURCES NEEDED
+- Example code analysis (completed via attachments)
+- Hardware specifications
+- Sensor datasheets
+- Competition rules and requirements
+
+---
+This plan ensures systematic, testable development while building toward a competition-ready robot.
+
+
+
+Tips:
+Use joystick attached to dog lead for anchor positioning rather than fishing line. Can have hooks over the walls with garage design / sitting on top as long as its touching the robot at the start and the hooks only touch the walls after the start of the match - cant be touching before.
