@@ -1,0 +1,11 @@
+report
+
+test everything to make sure its working
+watch dog
+navigation
+sensor filtering
+collection
+hard code starting path - button to change starting position
+computer vision - taking a photo or building a map to start
+start cage thing that drops down
+
