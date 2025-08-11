@@ -1,14 +1,3 @@
-/************************************
- *            motors.h              *
- * 
- * Motor outputs functions header
- * 
- * Arthors 
- *        Mark   Day
- *        Jack   Wilson
- *        Kieran James
- *************************************/
-
 #ifndef MOTORS_H_
 #define MOTORS_H_
 
