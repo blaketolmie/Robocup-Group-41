@@ -1,15 +1,3 @@
-/************************************
- *            motors.cpp            *
- * 
- * Motor outputs functions
- * 
- * Arthors 
- *        Mark   Day
- *        Jack   Wilson
- *        Kieran James
- *************************************/
-
-
 #include <Servo.h>
 #include <stdint.h>
 #include "Arduino.h"

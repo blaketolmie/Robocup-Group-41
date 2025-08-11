@@ -1,4 +1,8 @@
 report
+test and have everything coming into a scheduler.
+work on sensor fusion and the certainty grid - or just straight / left / right etc if wanting to keep simple until finding a weight
+
+
 
 test everything to make sure its working
 watch dog
