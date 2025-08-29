@@ -4,6 +4,7 @@
 // Add necessary includes here
 #include "globals.h"
 #include "motors.h"
+#include "servo_test.h"
 
 // Necessary includes for testing
 #include "motor_test.h"

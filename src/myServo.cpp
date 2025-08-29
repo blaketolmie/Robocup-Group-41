@@ -3,7 +3,7 @@
 //************************************
 #include "Arduino.h"
 #define _TASK_MICRO_RES
-#include <TaskSchedulerDeclarations.h>
+// #include <TaskSchedulerDeclarations.h>
 #include "myServo.h"
 #include <Servo.h>
 
