@@ -7,13 +7,16 @@
 - Teensy 4.0 microcontroller
 - SX1509 I/O Expander breakout board
 - 2x DC Motors with encoders
-- 1x Main servo (gripper/collection)
+- 2x Main servo (gripper/collection)
 - 4x HC-SR04 Ultrasonic sensors
 - 6x VL53L1X TOF sensors (long range array)
 - 1x VL53L0X TOF sensor (short range)
-- 1x Inductive proximity sensor
+- 2x Inductive proximity sensor
 - 1x Blue start button
 - Power supply (7-12V for VIN, or 5V via USB)
+
+
+
 
 ## POWER CONNECTIONS
 
@@ -108,6 +111,7 @@ Ultrasonic Sensor B:
 ├── Trig → Teensy Pin 30 (BtrigPin)
 └── Echo → Teensy Pin 31 (BechoPin) [INTERRUPT PIN]
 
+Ultrasonic C and D are on CON76 - need to manually do these connections.
 Ultrasonic Sensor C:
 ├── VCC  → 5V
 ├── GND  → GND

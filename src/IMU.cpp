@@ -8,7 +8,8 @@
 #include "telem.h"
 
 uint16_t BNO055_SAMPLERATE_DELAY_MS = 100;
-Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28, &Wire1);
+// Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28, &Wire1);
+Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28, &Wire2); //I2C bus 2
 Watchdog IMUWatchdog= Watchdog(8000);
 Watchdog RampWatchdog = Watchdog(5000);
 
