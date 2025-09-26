@@ -2,7 +2,7 @@
 #include <Arduino.h>
 #include <motors.h>
 
-bool debug = false;
+bool debug = true;
 
 char cmd[100];
 int cmdIndex;

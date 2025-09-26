@@ -61,11 +61,11 @@ typedef enum {
 #define BtrigPin 30
 #define BechoPin 31
 
-#define CtrigPin 22
-#define CechoPin 23
+#define CtrigPin 12
+#define CechoPin 13
 
-#define DtrigPin 20
-#define DechoPin 21
+#define DtrigPin 10
+#define DechoPin 11
 
 void sensors_init(void);
 

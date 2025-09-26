@@ -77,13 +77,24 @@ Task TIMU_update_watchdog(150, TASK_FOREVER, &IMU_update_watchdog);
 
 void setup()
 {   
+    // Initialize USB Serial for debugging
+    Serial.begin(115200);
+    delay(2000); // Wait for USB serial to initialize
+    Serial.println("=== RoboCup Robot Starting ===");
+    
     if (1) {
         telem_serial_init();
+        Serial.println("Serial7 initialized at 115200 baud");
     }
+    
+    Serial.println("Initializing sensors...");
     sensors_init();
+    Serial.println("Initializing motors...");
     motors_init();
+    Serial.println("Initializing IMU...");
     IMU_init();
 
+    Serial.println("Setting up task scheduler...");
     taskManager.init();
     taskManager.addTask(Tsensors_tof_read);
     taskManager.addTask(Tmotors_PID_drive);
@@ -94,25 +105,48 @@ void setup()
     taskManager.addTask(TIMU_update_watchdog);
 
     if (debug) {
+        Serial.println("Debug mode enabled - adding debug tasks");
         taskManager.addTask(Tsensors_tof_print);
-        //taskManager.addTask(Tmotors_print);
-        //taskManager.addTask(Ttelem_read);
-        //taskManager.addTask(Tsensors_navigation_print);
+        taskManager.addTask(Tmotors_print);
+        taskManager.addTask(Ttelem_read);
+        taskManager.addTask(Tsensors_navigation_print);
+        Serial.println("Debug tasks added");
+    } else {
+        Serial.println("Debug mode disabled");
     }
 
 
+    Serial.println("Enabling all tasks...");
     taskManager.enableAll();
+    
     //motors_test();
+    Serial.println("Waiting for servo to reach CLOSED position...");
     while (!motors_smart_servo_controller(CLOSED))
     {
+       Serial.print(".");
+       delay(100); // Add a small delay to prevent flooding
        continue;
     }
+    Serial.println("\nServo positioned!");
+    
+    Serial.println("Getting initial IMU heading...");
     IMU_get_heading();
+    
+    Serial.println("=== Setup complete, starting main loop ===");
+    Serial.println("Debug output will appear on Serial7 (hardware UART)");
+    Serial.println("USB Serial debug messages will continue here");
 }
 
 void loop()
 {
+    static unsigned long lastUSBDebug = 0;
     taskManager.execute();
+    
+    // Print occasional status messages to USB Serial
+    if (millis() - lastUSBDebug > 5000) { // Every 5 seconds
+        Serial.println("Main loop running - check Serial7 for sensor data");
+        lastUSBDebug = millis();
+    }
 }
 
 
@@ -168,19 +202,18 @@ void executeTask(void (*taskFunction)(), TaskTiming& timing) {
     unsigned long duration = micros() - start;
     updateTaskTiming(timing, duration);
 }
-/*
-void loop() {
-    executeTask(sensors_tof_read, taskTimings[0]);
-    executeTask(sensors_tof_print, taskTimings[1]);
-    executeTask(motors_PID_drive, taskTimings[2]);
-    executeTask(telem_read, taskTimings[3]);
-    executeTask(motors_robot_servo_controller, taskTimings[4]);
-    executeTask(sensors_ultrasonic_read, taskTimings[5]);
-    executeTask(navigate_logic, taskTimings[6]);
-    executeTask(sensors_navigation_print, taskTimings[7]);
-    executeTask(IMU_update_watchdog, taskTimings[9]);
-    printTaskTimings();
-    delay(1000); // Adjust delay as needed
-}
 
-*/
+// void loop() {
+//     executeTask(sensors_tof_read, taskTimings[0]);
+//     executeTask(sensors_tof_print, taskTimings[1]);
+//     executeTask(motors_PID_drive, taskTimings[2]);
+//     executeTask(telem_read, taskTimings[3]);
+//     executeTask(motors_robot_servo_controller, taskTimings[4]);
+//     executeTask(sensors_ultrasonic_read, taskTimings[5]);
+//     executeTask(navigate_logic, taskTimings[6]);
+//     executeTask(sensors_navigation_print, taskTimings[7]);
+//     executeTask(IMU_update_watchdog, taskTimings[9]);
+//     printTaskTimings();
+//     delay(1000); // Adjust delay as needed
+// }
+

@@ -8,7 +8,6 @@
  *  for controlling how frequently tasks sholud run
  *  
  *  
- *  written by: Logan Chatfield, Ben Fortune, Lachlan McKenzie, Jake Campbell
  *  
  ******************************************************************************/
 
